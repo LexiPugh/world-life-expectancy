@@ -12,6 +12,8 @@
     - [Step 6: Filling in the Blank Values in the Life Expectancy Column](#step-6-filling-in-the-blank-values-in-the-life-expectancy-column)
 -   [Part 2: Exploratory Data Analysis](#part-2-exploratory-data-analysis)
     - [Step 1: Which Countries Have Improved the Most and Least in Life Expectancy?](#step-1-which-countries-have-improved-the-most-and-least-in-life-expectancy)
+    - [Step 2: What is the Average Life Expectancy Per Year?](#step-2-what-is-the-average-life-expectancy-per-year)
+    - [Step 3: Is There a Correlation Between GDP and Life Expectancy?](#step-3-is-there-a-correlation-between-gdp-and-life-expectancy)
 
 
 # Project Overview
@@ -192,7 +194,7 @@ FROM
 WHERE
     country = 'Afghanistan'
 LIMIT 
-    10
+    10;
 ```
 
 Output Table:
@@ -220,7 +222,7 @@ FROM
 WHERE
     country = 'Albania'
 LIMIT 
-    10
+    10;
 ```
 
 Output Table:
@@ -254,7 +256,7 @@ INNER JOIN world_life_expectancy AS wle3
     ON wle1.country = wle3.country
     AND wle1.year = wle3.year + 1
 SET wle1.`Life expectancy` = ROUND((wle2.`Life expectancy` + wle3.`Life expectancy`) / 2, 1)
-WHERE wle1.`Life expectancy` = ''
+WHERE wle1.`Life expectancy` = '';
 ```
 
 With that, I'm finished cleaning the dataset! All duplicates are removed and all blanks values are filled in. While the dataset looks clean at a glance, it's possible that during the exploratory data analysis portion of the project I'll discover some other harder-to-spot issues that need to be fixed. This is a normal part of the process and I'll deal with any other issues as needed! Let's get into some analysis and insights.
@@ -285,7 +287,7 @@ HAVING
 ORDER BY
     life_increase_15_years DESC
 LIMIT 
-    5
+    5;
 ```
 
 Output Table:
@@ -314,7 +316,7 @@ HAVING
 ORDER BY
     life_increase_15_years ASC
 LIMIT 
-    5
+    5;
 ```
 
 Output Table:
@@ -331,3 +333,137 @@ Output Table:
 Insights 
 - Haiti, Zimbabwe, Eritrea, Uganda, and Botswana are the top five biggest improvers in terms of life expectancy over the last fifteen years. Haiti's life expectancy has increased by nearly thirty years, while the other countries in the top five have all increased by roughly twenty years, give or take. On the other hand, the countries that have improved the least in life expectancy are Guyana, Seychelles, Kuwait, Philippines, and Venezuela. Each of those countries saw an improvement of less than two years over the last fifteen years. 
 - Something important to note is that the minimum life expectancy between the top five and the bottom five have large variations. The top five started with life expectancies in the range of 36-46 years, while the bottom five started with life expectancies in the range of 65-73 years. If you look at the maximum life expectancy, the top five improvers are in the range of 65-67 while the bottom five are in the range of 66-74. The bottom five improvers still have a higher life expectancy overall even if they've improved less - the top five improvers started with such a low life expectancy that it was likely easier for them to see larger improvement.
+
+<br>
+
+### Step 2: What is the Average Life Expectancy Per Year?
+
+``` SQL
+SELECT
+    year,
+    ROUND(AVG(`Life expectancy`), 2) AS avg_life_expectancy
+FROM
+    world_life_expectancy
+WHERE
+    `Life expectancy` <> 0
+GROUP BY
+    year
+ORDER BY
+    year;
+```
+
+Output Table:
+
+| year | avg_life_expectancy |
+| :--- | :------------------ |
+| 2007 | 66.75               |
+| 2008 | 67.13               |
+| 2009 | 67.35               |
+| 2010 | 67.43               |
+| 2011 | 67.65               |
+| 2012 | 68.21               |
+| 2013 | 68.67               |
+| 2014 | 69.04               |
+| 2015 | 69.43               |
+| 2016 | 69.94               |
+| 2017 | 70.05               |
+| 2018 | 70.65               |
+| 2019 | 70.92               |
+| 2020 | 71.24               |
+| 2021 | 71.54               |
+| 2022 | 71.62               |
+
+Insights
+
+- The pattern seen at the country level also sticks at the world level - life expectancy is slowly increasing over the years. The world has gone from an average life expectancy of 66.75 in 2007 to 71.62 in 2022, an increase of 4.87 years in life expectancy over 15 years - that's great! I'm curious to see what the average life expectancy will be hundreds of years from now. Will it keep going up for years to come? Will we eventually hit a plateau? It's an interesting topic to think about!
+
+<br>
+
+### Step 3: Is There a Correlation Between GDP and Life Expectancy?
+- Note: There were some countries that had no data for life expectancy or GDP. The countries without those values were rather small ones, so it's possible those values never got reported. This is another case where understanding the data collection process would help understand why those values are missing and how to retrieve them. For the sake of not throwing off the numbers in this project, I filtered them out!
+
+``` SQL
+SELECT 
+    country,
+    ROUND(AVG(`Life expectancy`), 1) AS avg_life_expectancy,
+    ROUND(AVG(GDP), 1) AS avg_gdp
+FROM 
+    world_life_expectancy
+GROUP BY
+    country
+HAVING
+    avg_life_expectancy <> 0
+    AND avg_gdp <> 0
+ORDER BY
+    avg_gdp DESC
+LIMIT
+    5;
+```
+
+Output Table:
+
+| country     | avg_life_expectancy | avg_gdp |
+| :---------- | :------------------ | :------ |
+| Switzerland | 82.3                | 57363.1 |
+| Luxembourg  | 80.8                | 53257.1 |
+| Qatar       | 77                  | 40748.6 |
+| Netherlands | 81.1                | 34964.8 |
+| Australia   | 81.8                | 34637.6 |
+
+
+``` SQL
+SELECT 
+    country,
+    ROUND(AVG(`Life expectancy`), 1) AS avg_life_expectancy,
+    ROUND(AVG(GDP), 1) AS avg_gdp
+FROM 
+    world_life_expectancy
+GROUP BY
+    country
+HAVING
+    avg_life_expectancy <> 0
+    AND avg_gdp <> 0
+ORDER BY
+    avg_gdp ASC
+LIMIT
+    5;
+```
+
+Output Table:
+
+| country | avg_life_expectancy | avg_gdp |
+| :------ | :------------------ | :------ |
+| Somalia | 53.3                | 55.8    |
+| Burundi | 55.5                | 137.9   |
+| Eritrea | 60.7                | 194.6   |
+| Malawi  | 49.9                | 237.6   |
+| Liberia | 57.5                | 246.3   |
+
+Insights: Even though we're only looking at a small amount of data, there seems to be a positive correlation between the GDP (Gross Domestic Product) and life expectancy of countries! As GDP goes up, so does life expectancy. This would make sense - richer countries have access to more advanced technologies and products, which would help them live a longer life. However, I want to dig a bit deeper to confirm this correlation truly exists!
+
+My idea is to use CASE statements to group countries into a low GDP group and a high GDP group. Then, I can average the life expectancy for each group and see if I spot a difference. However, to accomplish this I had figure out what's considered a low GDP and what's considered a high GDP. To determine this, I decided to order my dataset by GDP, split it down the middle, and base my calculations on the middle value - basically a loose way of calculating the median of the dataset. Any countries with a GDP greater than or equal to the median value will be considered high GDP countries, while any countries with a GDP less than the median value will be considered low GDP countries.
+- The base dataset has about 2,900 rows, but when filtering out the 0's in the GDP column, it loses about 500 rows. That means our dataset has about 2,400 rows, so the middle of the dataset is around 1200.
+
+``` SQL
+SELECT
+    GDP
+FROM
+    world_life_expectancy
+WHERE
+    GDP <> 0
+ORDER BY
+    GDP
+LIMIT
+    1
+OFFSET
+    1199;
+```
+
+Output Table:
+
+| GDP  |
+| :--- |
+| 1631 |
+
+I then used that median GDP value of 1631 as a basis for the CASE statements in my next query.
+
