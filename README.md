@@ -9,6 +9,7 @@
     - [Step 3: Investigating the Blank Values in the Status Column](#step-3-investigating-the-blank-values-in-the-status-column)
     - [Step 4: Filling in the Blank Values in the Status Column](#step-4-filling-in-the-blank-values-in-the-status-column)
     - [Step 5: Investigating the Blank Values in the Life Expectancy Column](#step-5-investigating-the-blank-values-in-the-life-expectancy-column)
+    - [Step 6: Filling in the Blank Values in the Life Expectancy Column](#step-6-filling-in-the-blank-values-in-the-life-expectancy-column)
 -   [Part 2: Exploratory Data Analysis](#part-2-exploratory-data-analysis)
 
 
@@ -240,7 +241,20 @@ Output Table:
 
 ### Step 6: Filling in the Blank Values in the Life Expectancy Column
 While filling in blank values with estimations is not always advisable, it makes sense to do it here. There are only a couple blank rows, and the life expectancy values are following a consistent pattern - they tick up slightly over the years. To estimate the missing value, we can add the life expectancy from the prior year to the life expectancy from the following year and divide by two to calculate the average. This will get us a value directly in between those two values - it may not be exact, but it will be a good estimate of the missing life expectancy value.
+- I did a double self join to solve this problem. The first table is the base table with the blank, while the second table subtracts 1 from the year, meaning it has the life expectancy value from the previous year rather than a blank. The third table adds 1 to the year, meaning it has the life expectancy value from the following year rather than a blank.
+- I added the life expectancy values from the second and third tables and divided by 2 to get the average of the two values - I also used the ROUND() function to round to 1 decimal place, making our new value uniform with the rest of the life expectancy values in the table. Finally, I updated the table and set the **Life Expectancy** column in the first table equal to the new value we just calculated - of course, I only applied the calculation to rows that had blanks. This filled in all the blanks in the **Life Expectancy** column.
 
+``` SQL
+UPDATE world_life_expectancy AS wle1
+INNER JOIN world_life_expectancy AS wle2
+    ON wle1.country = wle2.country
+    AND wle1.year = wle2.year - 1
+INNER JOIN world_life_expectancy AS wle3
+    ON wle1.country = wle3.country
+    AND wle1.year = wle3.year + 1
+SET wle1.`Life expectancy` = ROUND((wle2.`Life expectancy` + wle3.`Life expectancy`) / 2, 1)
+WHERE wle1.`Life expectancy` = ''
+```
 
 <br>
 <br>
