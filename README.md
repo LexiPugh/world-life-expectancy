@@ -11,6 +11,7 @@
     - [Step 5: Investigating the Blank Values in the Life Expectancy Column](#step-5-investigating-the-blank-values-in-the-life-expectancy-column)
     - [Step 6: Filling in the Blank Values in the Life Expectancy Column](#step-6-filling-in-the-blank-values-in-the-life-expectancy-column)
 -   [Part 2: Exploratory Data Analysis](#part-2-exploratory-data-analysis)
+    - [Step 1: Which Countries Have Improved the Most and Least in Life Expectancy?](#step-1-which-countries-have-improved-the-most-and-least-in-life-expectancy)
 
 
 # Project Overview
@@ -256,9 +257,77 @@ SET wle1.`Life expectancy` = ROUND((wle2.`Life expectancy` + wle3.`Life expectan
 WHERE wle1.`Life expectancy` = ''
 ```
 
+With that, I'm finished cleaning the dataset! All duplicates are removed and all blanks values are filled in. While the dataset looks clean at a glance, it's possible that during the exploratory data analysis portion of the project I'll discover some other harder-to-spot issues that need to be fixed. This is a normal part of the process and I'll deal with any other issues as needed! Let's get into some analysis and insights.
+
 <br>
 <br>
 
 ------------------------------------------------------------------------
 
 # Part 2: Exploratory Data Analysis
+
+### Step 1: Which Countries Have Improved the Most and Least in Life Expectancy?
+- Note: I added the HAVING clause that removes zero values because there were a handful of countries that had no life expectancy data at all, they had all 0's in that column. These weren't values that I could fix like I did in Part 1 of the project - I would have to do investigation into how the data was collected to understand why those values were missing and see if I could recover the missing data. Unfortunately I was unable to do that in the context of this project, so they got filtered out instead!
+
+``` SQL
+SELECT 
+    country,
+    MIN(`Life expectancy`) AS min_life_expectancy,
+    MAX(`Life expectancy`) AS max_life_expectancy,
+    ROUND(MAX(`Life expectancy`) - MIN(`Life expectancy`), 1) AS life_increase_15_years
+FROM 
+    world_life_expectancy
+GROUP BY
+    country
+HAVING
+    min_life_expectancy <> 0
+    AND max_life_expectancy <> 0
+ORDER BY
+    life_increase_15_years DESC
+LIMIT 
+    5
+```
+
+Output Table:
+
+| country  | min_life_expectancy | max_life_expectancy | life_increase_15_years |
+| :------- | :------------------ | :------------------ | :--------------------- |
+| Haiti    | 36.3                | 65                  | 28.7                   |
+| Zimbabwe | 44.3                | 67                  | 22.7                   |
+| Eritrea  | 45.3                | 67                  | 21.7                   |
+| Uganda   | 46.6                | 67                  | 20.4                   |
+| Botswana | 46                  | 65.7                | 19.7                   |
+
+``` SQL
+SELECT 
+    country,
+    MIN(`Life expectancy`) AS min_life_expectancy,
+    MAX(`Life expectancy`) AS max_life_expectancy,
+    ROUND(MAX(`Life expectancy`) - MIN(`Life expectancy`), 1) AS life_increase_15_years
+FROM 
+    world_life_expectancy
+GROUP BY
+    country
+HAVING
+    min_life_expectancy <> 0
+    AND max_life_expectancy <> 0
+ORDER BY
+    life_increase_15_years ASC
+LIMIT 
+    5
+```
+
+Output Table:
+
+| country                            | min_life_expectancy | max_life_expectancy | life_increase_15_years |
+| :--------------------------------- | :------------------ | :------------------ | :--------------------- |
+| Guyana                             | 65                  | 66.3                | 1.3                    |
+| Seychelles                         | 71.8                | 73.2                | 1.4                    |
+| Kuwait                             | 73.2                | 74.7                | 1.5                    |
+| Philippines                        | 66.8                | 68.5                | 1.7                    |
+| Venezuela (Bolivarian Republic of) | 72.4                | 74.1                | 1.7                    |
+
+
+Insights 
+- Haiti, Zimbabwe, Eritrea, Uganda, and Botswana are the top five biggest improvers in terms of life expectancy over the last fifteen years. Haiti's life expectancy has increased by nearly thirty years, while the other countries in the top five have all increased by roughly twenty years, give or take. On the other hand, the countries that have improved the least in life expectancy are Guyana, Seychelles, Kuwait, Philippines, and Venezuela. Each of those countries saw an improvement of less than two years over the last fifteen years. 
+- Something important to note is that the minimum life expectancy between the top five and the bottom five have large variations. The top five started with life expectancies in the range of 36-46 years, while the bottom five started with life expectancies in the range of 65-73 years. If you look at the maximum life expectancy, the top five improvers are in the range of 65-67 while the bottom five are in the range of 66-74. The bottom five improvers still have a higher life expectancy overall even if they've improved less - the top five improvers started with such a low life expectancy that it was likely easier for them to see larger improvement.
