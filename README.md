@@ -14,6 +14,8 @@
     - [Step 1: Which Countries Have Improved the Most and Least in Life Expectancy?](#step-1-which-countries-have-improved-the-most-and-least-in-life-expectancy)
     - [Step 2: What is the Average Life Expectancy Per Year?](#step-2-what-is-the-average-life-expectancy-per-year)
     - [Step 3: Is There a Correlation Between GDP and Life Expectancy?](#step-3-is-there-a-correlation-between-gdp-and-life-expectancy)
+    - [Step 4: Is There a Correlation Between Status and Life Expectancy?](#step-4-is-there-a-correlation-between-status-and-life-expectancy)
+    - [Step 5: Is There a Correlation Between BMI and Life Expectancy?](#step-5-is-there-a-correlation-between-bmi-and-life-expectancy)
 
 
 # Project Overview
@@ -439,10 +441,13 @@ Output Table:
 | Malawi  | 49.9                | 237.6   |
 | Liberia | 57.5                | 246.3   |
 
-Insights: Even though we're only looking at a small amount of data, there seems to be a positive correlation between the GDP (Gross Domestic Product) and life expectancy of countries! As GDP goes up, so does life expectancy. This would make sense - richer countries have access to more advanced technologies and products, which would help them live a longer life. However, I want to dig a bit deeper to confirm this correlation truly exists!
+Insights
 
-My idea is to use CASE statements to group countries into a low GDP group and a high GDP group. Then, I can average the life expectancy for each group and see if I spot a difference. However, to accomplish this I had figure out what's considered a low GDP and what's considered a high GDP. To determine this, I decided to order my dataset by GDP, split it down the middle, and base my calculations on the middle value - basically a loose way of calculating the median of the dataset. Any countries with a GDP greater than or equal to the median value will be considered high GDP countries, while any countries with a GDP less than the median value will be considered low GDP countries.
-- The base dataset has about 2,900 rows, but when filtering out the 0's in the GDP column, it loses about 500 rows. That means our dataset has about 2,400 rows, so the middle of the dataset is around 1200.
+- Even though we're only looking at a small amount of data, there seems to be a positive correlation between the GDP (Gross Domestic Product) and life expectancy of countries! As GDP goes up, so does life expectancy. This would make sense - richer countries have access to more advanced technologies and products, which would help them live a longer life. However, I want to dig a bit deeper to confirm this correlation truly exists!
+
+- My idea is to use CASE statements to group countries into a low GDP group and a high GDP group. Then, I can average the life expectancy for each group and see if I spot a difference. However, to accomplish this I need to figure out what's considered a low GDP and what's considered a high GDP. To determine this, I decided to order my dataset by GDP, split it down the middle, and base my calculations on the middle value - basically a loose way of calculating the median of the dataset. Any countries with a GDP greater than or equal to the median value will be considered high GDP countries, while any countries with a GDP less than the median value will be considered low GDP countries.
+
+- The base dataset has about 2950 rows, but when filtering out the 0's in the GDP column, it loses about 450 rows. Filtering out the 0's in the **Life Expectancy** column loses another 10 rows. That means our filtered dataset has about 2,490 rows, so the middle of the dataset is around 1245.
 
 ``` SQL
 SELECT
@@ -456,14 +461,147 @@ ORDER BY
 LIMIT
     1
 OFFSET
-    1199;
+    1244;
 ```
 
 Output Table:
 
 | GDP  |
 | :--- |
-| 1631 |
+| 1765 |
 
-I then used that median GDP value of 1631 as a basis for the CASE statements in my next query.
+I then used that median GDP value of 1765 as a basis for the CASE statements in my next query.
+
+``` SQL
+SELECT 
+    SUM(CASE WHEN GDP >= 1765 THEN 1 ELSE 0 END) AS high_GDP,
+    ROUND(AVG(CASE WHEN GDP >= 1765 THEN `Life expectancy` ELSE NULL END), 1) AS high_GDP_life_expectancy,
+    SUM(CASE WHEN GDP < 1765 THEN 1 ELSE 0 END) AS low_GDP,
+    ROUND(AVG(CASE WHEN GDP < 1765 THEN `Life expectancy` ELSE NULL END), 1) AS low_GDP_life_expectancy
+FROM 
+    world_life_expectancy
+WHERE 
+    GDP <> 0
+    AND `Life expectancy` <> 0;
+```
+
+Output Table:
+
+| high_GDP | high_GDP_life_expectancy | low_GDP | low_GDP_life_expectancy |
+| -------- | ------------------------ | ------- | ----------------------- |
+| 1243     | 74.7                     | 1242    | 64.1                    |
+
+Insights:
+
+First of all, it seems like the median GDP being 1765 was quite a close guess - the high GDP group has 1243 countries while the low GDP group has 1242 countries, so they're split right down the middle. This query also helps us see the relationship between GDP and life expectancy more clearly. The high GDP group has a life expectancy greater than the low GDP group by over 10 years. With the results of this query, I'm more confident in saying that there's a positive correlation between GDP and life expectancy - the higher the GDP, the higher the life expectancy!
+
+<br>
+
+### Step 4: Is There a Correlation Between Status and Life Expectancy?
+
+``` SQL
+SELECT 
+    status,
+    COUNT(DISTINCT country) AS number_of_countries,
+    ROUND(AVG(`Life expectancy`), 1) AS avg_life_expectancy
+FROM 
+    world_life_expectancy
+WHERE
+    `Life expectancy` <> 0
+GROUP BY
+    status;
+```
+
+Output Table:
+
+| status     | number_of_countries | avg_life_expectancy |
+| :--------- | :------------------ | :------------------ |
+| Developed  | 32                  | 79.2                |
+| Developing | 151                 | 67.1                |
+
+Insights
+- According to this output table, developed countries have an average life expectancy that's over 12 years higher compared to developing countries. However, it is worth it to note the discrepancy between the number of countries in both groups - there are over 100 more developing countries compared to developed countries. It's possible that there are developing countries in the mix that have an average life expectancy much higher than 67.1, but their average could be getting dragged down by other countries. It's much easier for developed countries to maintain a higher average when there's fewer of them.
+- Unfortunately, this isn't like the GDP where I can split the values down the middle to make the group numbers fair - there are more developing countries than developed countries, that's a fact I can't change. With the data that's available to us, it can be determined that having a status of developed correlates with a higher life expectancy, while countries with a status of developing have a lower life expectancy.
+
+<br>
+
+### Step 5: Is There a Correlation Between BMI and Life Expectancy?
+- Note: You may notice that I've filtered out rows where the BMI is equal to 0. This is another case of me not being able to estimate the missing values - the BMI values are missing for all years in the affected countries, not just one or two. I've filtered out the 0's so they don't throw our numbers off!
+
+``` SQL
+SELECT 
+    country,
+    ROUND(AVG(`Life expectancy`), 1) AS avg_life_expectancy,
+    ROUND(AVG(BMI), 1) AS avg_BMI
+FROM 
+    world_life_expectancy
+WHERE
+    BMI <> 0
+    AND `Life expectancy` <> 0
+GROUP BY
+    country
+ORDER BY
+    avg_BMI DESC
+LIMIT
+    10;
+```
+
+Output Table:
+
+| country                          | avg_life_expectancy | avg_BMI |
+| :------------------------------- | :------------------ | :------ |
+| Kiribati                         | 65.1                | 69.4    |
+| Malta                            | 80.4                | 66.2    |
+| Qatar                            | 77                  | 65.6    |
+| Micronesia (Federated States of) | 68.2                | 65.2    |
+| Tonga                            | 72.5                | 62.9    |
+| Samoa                            | 73.6                | 62.9    |
+| Kuwait                           | 73.8                | 59.6    |
+| Greece                           | 81.2                | 58.7    |
+| Spain                            | 82.1                | 58.7    |
+| United States of America         | 78.1                | 58.4    |
+
+``` SQL
+SELECT 
+    country,
+    ROUND(AVG(`Life expectancy`), 1) AS avg_life_expectancy,
+    ROUND(AVG(BMI), 1) AS avg_BMI
+FROM 
+    world_life_expectancy
+WHERE
+    BMI <> 0
+    AND `Life expectancy` <> 0
+GROUP BY
+    country
+ORDER BY
+    avg_BMI ASC
+LIMIT
+    10;
+```
+
+Output Table:
+
+| country                          | avg_life_expectancy | avg_BMI |
+| :------------------------------- | :------------------ | :------ |
+| Viet Nam                         | 74.8                | 11.2    |
+| Bangladesh                       | 69.3                | 12.9    |
+| Lao People's Democratic Republic | 62.4                | 14.4    |
+| Timor-Leste                      | 64.8                | 14.6    |
+| Rwanda                           | 59.3                | 14.7    |
+| Madagascar                       | 62.7                | 14.8    |
+| Ethiopia                         | 59.1                | 14.8    |
+| India                            | 65.4                | 14.8    |
+| Nepal                            | 66.5                | 15.2    |
+| Eritrea                          | 60.7                | 15.2    |
+
+Insights
+- This was actually a bit suprising for me! Since obesity comes with so many health issues, I was fully expecting that countries with higher BMIs would have a lower life expectancy. The data shows the exact opposite though! Countries with high BMIs tend to have a higher life expectancy than countries with lower BMIs.
+- In hindsight, I do think this makes sense for a couple reasons:
+  - There are likely countries where their low BMIs are not by choice - perhaps they don't have enough money to eat as much as they want or need to, leading to lower BMIs and lower life expectancies.
+  - Countries with high BMIs are full of people that can afford as much food as they want, which means they're also more likely to afford any treatments they need as a side effect of being obese. The people in these countries can alsoafford enough food to eat it all and become obese, and we've already established that high GDP correlates to a higher average life expectancy.
+- This was the most interesting insight so far, at least for me! Let's perform one more analysis before closing the project out!
+
+<br>
+
+
 
