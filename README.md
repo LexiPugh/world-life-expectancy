@@ -2,20 +2,22 @@
 
 **Table of Contents**
 
--   [Project Overview](#project-overview)
--   [Part 1: Data Cleaning](#part-1-data-cleaning)
+- [Project Overview](#project-overview)
+- [Part 1: Data Cleaning](#part-1-data-cleaning)
     - [Step 1: Identifying Duplicates in the Data](#step-1-identifying-duplicates-in-the-data)
     - [Step 2: Removing Duplicates From the Data](#step-2-removing-duplicates-from-the-data)
     - [Step 3: Investigating the Blank Values in the Status Column](#step-3-investigating-the-blank-values-in-the-status-column)
     - [Step 4: Filling in the Blank Values in the Status Column](#step-4-filling-in-the-blank-values-in-the-status-column)
     - [Step 5: Investigating the Blank Values in the Life Expectancy Column](#step-5-investigating-the-blank-values-in-the-life-expectancy-column)
     - [Step 6: Filling in the Blank Values in the Life Expectancy Column](#step-6-filling-in-the-blank-values-in-the-life-expectancy-column)
--   [Part 2: Exploratory Data Analysis](#part-2-exploratory-data-analysis)
+- [Part 2: Exploratory Data Analysis](#part-2-exploratory-data-analysis)
     - [Step 1: Which Countries Have Improved the Most and Least in Life Expectancy?](#step-1-which-countries-have-improved-the-most-and-least-in-life-expectancy)
     - [Step 2: What is the Average Life Expectancy Per Year?](#step-2-what-is-the-average-life-expectancy-per-year)
     - [Step 3: Is There a Correlation Between GDP and Life Expectancy?](#step-3-is-there-a-correlation-between-gdp-and-life-expectancy)
     - [Step 4: Is There a Correlation Between Status and Life Expectancy?](#step-4-is-there-a-correlation-between-status-and-life-expectancy)
     - [Step 5: Is There a Correlation Between BMI and Life Expectancy?](#step-5-is-there-a-correlation-between-bmi-and-life-expectancy)
+    - [Step 6: Is There a Correlation Between Adult Mortality and Life Expectancy?](#step-6-is-there-a-correlation-between-adult-mortality-and-life-expectancy)
+- [Conclusion](#conclusion)
 
 
 # Project Overview
@@ -603,5 +605,139 @@ Insights
 
 <br>
 
+### Step 6: Is There a Correlation Between Adult Mortality and Life Expectancy?
+Adult mortality is a phrase I haden't heard of before, so I had to go do some research on it. Essentially, adult mortality is how many people 15 and up you would expect to die before they reach their 60th birthday, out of 1000. So if a country has a mortality rate of 100, it means they would expect 100 people 15 and up to die before they reach 60, per 1000 people. To find if there was a correlation between adult mortality and life expectancy, I wanted to find the country with the lowest overall adult mortality and the highest overall adult mortality.
 
+``` SQL
+SELECT
+    country,
+    SUM(`Adult Mortality`) AS 15_year_adult_mortality
+FROM
+    world_life_expectancy
+WHERE
+    `Adult Mortality` <> 0
+GROUP BY
+    country
+ORDER BY
+    15_year_adult_mortality ASC
+LIMIT
+    1
+```
 
+Output Table:
+
+| country | 15_year_adult_mortality |
+| :------ | :---------------------- |
+| Tunisia | 300                     |
+
+``` SQL
+SELECT
+    country,
+    SUM(`Adult Mortality`) AS 15_year_adult_mortality
+FROM
+    world_life_expectancy
+WHERE
+    `Adult Mortality` <> 0
+GROUP BY
+    country
+ORDER BY
+    15_year_adult_mortality DESC
+LIMIT
+    1
+```
+
+Output Table:
+
+| country | 15_year_adult_mortality |
+| :------ | :---------------------- |
+| Lesotho | 8801                    |
+
+Now that we know Tunisia has the overall lowest adult mortality rate and Lesotho has the overall highest, let's do some analysis to see what their life expectancies are.
+
+``` SQL
+SELECT 
+    country,
+    year,
+    `Life expectancy`,
+    `Adult Mortality`,
+    SUM(`Adult Mortality`) OVER(PARTITION BY country ORDER BY year) AS rolling_total
+FROM 
+    world_life_expectancy
+WHERE
+    `Life expectancy` <> 0
+    AND country = 'Tunisia';
+```
+
+Output Table:
+
+| country | year | Life expectancy | Adult Mortality | rolling_total |
+| :------ | :--- | :-------------- | :-------------- | :------------ |
+| Tunisia | 2007 | 72.9            | 112             | 112           |
+| Tunisia | 2008 | 73.2            | 11              | 123           |
+| Tunisia | 2009 | 73.5            | 19              | 142           |
+| Tunisia | 2010 | 73.7            | 17              | 159           |
+| Tunisia | 2011 | 74              | 15              | 174           |
+| Tunisia | 2012 | 74.2            | 14              | 188           |
+| Tunisia | 2013 | 74.4            | 12              | 200           |
+| Tunisia | 2014 | 74.6            | 12              | 212           |
+| Tunisia | 2015 | 74.7            | 12              | 224           |
+| Tunisia | 2016 | 74.7            | 12              | 236           |
+| Tunisia | 2017 | 74.8            | 12              | 248           |
+| Tunisia | 2018 | 74.8            | 13              | 261           |
+| Tunisia | 2019 | 74.9            | 13              | 274           |
+| Tunisia | 2020 | 74.9            | 13              | 287           |
+| Tunisia | 2021 | 75.1            | 12              | 299           |
+| Tunisia | 2022 | 75.3            | 1               | 300           |
+
+``` SQL
+SELECT 
+    country,
+    year,
+    `Life expectancy`,
+    `Adult Mortality`,
+    SUM(`Adult Mortality`) OVER(PARTITION BY country ORDER BY year) AS rolling_total
+FROM 
+    world_life_expectancy
+WHERE
+    `Life expectancy` <> 0
+    AND country = 'Lesotho';
+```
+
+Output Table:
+
+| country | year | Life expectancy | Adult Mortality | rolling_total |
+| :------ | :--- | :-------------- | :-------------- | :------------ |
+| Lesotho | 2007 | 49.3            | 543             | 543           |
+| Lesotho | 2008 | 47.8            | 586             | 1129          |
+| Lesotho | 2009 | 46.4            | 622             | 1751          |
+| Lesotho | 2010 | 45.5            | 648             | 2399          |
+| Lesotho | 2011 | 44.8            | 666             | 3065          |
+| Lesotho | 2012 | 44.5            | 675             | 3740          |
+| Lesotho | 2013 | 45.3            | 654             | 4394          |
+| Lesotho | 2014 | 46.2            | 633             | 5027          |
+| Lesotho | 2015 | 47.8            | 592             | 5619          |
+| Lesotho | 2016 | 49.4            | 566             | 6185          |
+| Lesotho | 2017 | 51.1            | 527             | 6712          |
+| Lesotho | 2018 | 52.3            | 52              | 6764          |
+| Lesotho | 2019 | 52.2            | 513             | 7277          |
+| Lesotho | 2020 | 52.1            | 518             | 7795          |
+| Lesotho | 2021 | 52.1            | 522             | 8317          |
+| Lesotho | 2022 | 53.7            | 484             | 8801          |
+
+Insights
+
+- The first thing I notice is that both countries have one or two values that may be slightly off. Tunisia has a value of 112 in 2007 and 1 in 2022, while Lesotho has a value of 52 for 2018. These could possibly be data quality issues or there could possibly be explanations for them - again, further information on the data collection process would be needed to resolve these errors, or identify if they're errors at all.
+- Taking the data at face value, the difference in life expectancy and adult mortality between the two countries is staggering! Lesotho has a life expectancy in the range of 49-54 years, while Tunisia has a life expectancy in the range of 73-75 years. Tunisia's adult mortality rate is in the range of about 10-20, while Lesotho is in the range of 500-700.
+- The rolling total column is also super interesting here because we can calculate what percentage of adults each country expects to die before they reach 60. This dataset is over 15 years and each mortality rate is out of 1,000 people, so the total mortality rate is out of 15,000 people. This means that Tunisia would expect 300/15,000 of their adults to die before age 60, or about 2%. On the other hand, Lesotho expects 8,801/15,000 of their adults to die before age 60, or about 59%. Considering the fact that Tunisia's life expectancy is in the 70's while Lesotho's is in the 50's, this makes sense.
+- From the data presented, we could conclude that life expectancy and adult mortality have a negative correlation. The higher the life expectancy, the lower adult mortality, and vice versa. Considering adult mortality is based off how likely adults are to make it until age 60, it makes sense that countries with life expectancies far exceeding 60 would have a lower mortality rate.
+
+<br>
+<br>
+
+# Conclusion
+
+That concludes my World Life Expectancy project! I had a lot of fun with this project. It was great to start with dirty data, since it allowed me to show off my data cleaning skills. It was also great to just jump into the dataset, look over what columns were included, and come up with ideas for the type of insights I could extract. While I may not have answered a specific business problem here or provided a recommendation, I was still able to explore and become familiar with the data in the dataset - this is a very important skill for a data analyst, and a needed step before recommendations can be given. 
+
+This is a pretty hefty project, so if you've read this far, thank you so much for making it to the end! If you'd like to view my other projects, take a look at my resume, email me, or shoot me a message on LinkedIn, check out my resume website! All my project and contact information is on there. Thanks again!
+
+🖥️ https://lexipugh.github.io/portfolio/
