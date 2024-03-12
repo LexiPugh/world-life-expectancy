@@ -449,7 +449,7 @@ Insights
 
 - My idea is to use CASE statements to group countries into a low GDP group and a high GDP group. Then, I can average the life expectancy for each group and see if I spot a difference. However, to accomplish this I need to figure out what's considered a low GDP and what's considered a high GDP. To determine this, I decided to order my dataset by GDP, split it down the middle, and base my calculations on the middle value - a loose way of calculating the median of the dataset. Any countries with a GDP greater than or equal to the median value will be considered high-GDP countries, while any countries with a GDP less than the median value will be considered low-GDP countries.
 
-- The base dataset has about 2950 rows, but when filtering out the 0's in the GDP column, it loses about 450 rows. Filtering out the 0's in the **Life Expectancy** column loses another 10 rows. That means our filtered dataset has about 2,490 rows, so the middle of the dataset is around 1245.
+- The base dataset has about 2950 rows, but when filtering out the 0's in the **GDP** column, it loses about 450 rows. Filtering out the 0's in the **Life Expectancy** column loses another 10 rows. That means our filtered dataset has about 2,490 rows, so the middle of the dataset is around 1245.
 
 ``` SQL
 SELECT
