@@ -22,6 +22,14 @@
 
 # Project Overview
 
+This project was completed in MySQL Workbench. In this project, I was looking at a dataset that contained information about life expectancy around the world, along with many other global health indicators. The first goal of this project was to identify issues in the dataset and clean the data as much as possible. The second goal of this project was to explore variations in life expectancy across different countries and examine if other indicators correlate, whether positively or negatively, with life expectancy. The overall goal of this project wasn't to provide a recommendation like many of my other projects are - the goal was simply to become familiar with the dataset, which is an important skill for any data analyst. The tasks completed in this project include:
+
+- Used the CONCAT() function to engineer a unique column that could be used to check for the existence of duplicates
+- Wrote complex SQL queries that used window functions and self-joins to remove duplicates and fill in blanks where possible
+- Conducted exploratory data analysis (EDA) to identify patterns and trends in life expectancy over time and across different geographic regions
+- Examined the relationship between life expectancy and various socio-economic indicators such as GDP, BMI, and Adult Mortality
+- Researched global indicators such as Adult Mortality to contextualize my findings and enhance understanding of the factors influencing life expectancy
+- Used statistical methods such as finding the median of the dataset to dig deeper into the data and verify my findings about the correlation between GDP and life expectancy
 
 
 <br>
