@@ -63,7 +63,7 @@ Output Table:
 There are only three duplicates in the data, so it would be very easy to identify the **Row_ID** of each and simply drop them. However, when dealing with millions of rows of data where there could be hundreds or thousands of duplicates, this is not a feasible solution. Instead, a query can be written to identify all the duplicate rows and delete them from the table.
 - The innermost query is using the ROW_NUMBER() window function to assign a row number to each combination of country/year, which we achieved with the CONCAT() function. A non-duplicate record will have a row number of 1, while any duplicate records will be assigned a row number greater than 1.
 - To filter to records where the row number is greater than 1, the query where we assigned the row numbers must be used as a subquery. We SELECT the row_id from that query, but only WHERE the row number is greater than 1.
-- Finally, the outermost query deletes records from world_life_expectancy where the row_id of the record is found within the queries that check for duplicates - this deletes the 3 duplicate records, and would delete any others if there had been more.
+- Finally, the outermost query deletes records from world_life_expectancy where the row_id of the record is found within the queries that check for duplicates - this deletes the 3 duplicate records and would delete any others if there had been more.
 
 ``` SQL
 DELETE FROM world_life_expectancy
@@ -132,8 +132,8 @@ Output Table:
 
 ### Step 4: Filling in the Blank Values in the Status Column
 We've discovered that the **Status** column keeps track of whether a country is developing or developed - it should be possible to fill in those blank values by looking at a country's status from previous years.
-- I originally attempted to accomplish this with a subquery, but ended up getting the desired output by self-joining the data on country instead. I set the status of the first table equal to developing, but only on the condition that in the second table, there existed a record where status was not blank, and also equal to developing.
-- To summarize, the query is connecting the country in both tables - if the country has a value for the **Status** column in the second table, it can fill in the blanks in the first table with that same value. I used a similar query to fill in the developed countries as well, so the **Status** column now has zero blanks.
+- I originally attempted to accomplish this with a subquery but ended up getting the desired output by self-joining the data on country instead. I set the status of the first table equal to developing, but only on the condition that in the second table, there existed a record where the status was not blank, and also equal to developing.
+- To summarize, the query connects the country in both tables - if the country has a value for the **Status** column in the second table, it can fill in the blanks in the first table with that same value. I used a similar query to fill in the developed countries as well, so the **Status** column now has zero blanks.
 
 ``` SQL
 UPDATE
@@ -186,7 +186,7 @@ Output Table:
 | Afghanistan | 2018 |                 |
 | Albania     | 2018 |                 |
 
-There's only a couple rows missing values for **Life Expectancy**, but this one won't be as straight forward to fill in as **Status** was. Let's take a look at the life expectancy values for both countries to see if the values follow a pattern.
+There are only a couple of rows missing values for **Life Expectancy**, but this one won't be as straightforward to fill in as **Status** was. Let's take a look at the life expectancy values for both countries to see if the values follow a pattern.
 
 ``` SQL
 SELECT 
@@ -247,8 +247,8 @@ Output Table:
 <br>
 
 ### Step 6: Filling in the Blank Values in the Life Expectancy Column
-While filling in blank values with estimations is not always advisable, it makes sense to do it here. There are only a couple blank rows, and the life expectancy values are following a consistent pattern - they tick up slightly over the years. To estimate the missing value, we can add the life expectancy from the prior year to the life expectancy from the following year and divide by two to calculate the average. This will get us a value directly in between those two values - it may not be exact, but it will be a good estimate of the missing life expectancy value.
-- I did a double self join to solve this problem. The first table is the base table with the blank, while the second table subtracts 1 from the year, meaning it has the life expectancy value from the previous year rather than a blank. The third table adds 1 to the year, meaning it has the life expectancy value from the following year rather than a blank.
+While filling in blank values with estimations is not always advisable, it makes sense to do it here. There are only a couple of blank rows, and the life expectancy values are following a consistent pattern - they tick up slightly over the years. To estimate the missing value, we can add the life expectancy from the prior year to the life expectancy from the following year and divide by two to calculate the average. This will get us a value directly in between those two values - it may not be exact, but it will be a good estimate of the missing life expectancy value.
+- I did a double self-join to solve this problem. The first table is the base table with the blank, while the second table subtracts 1 from the year, meaning it has the life expectancy value from the previous year rather than a blank. The third table adds 1 to the year, meaning it has the life expectancy value from the following year rather than a blank.
 - I added the life expectancy values from the second and third tables and divided by 2 to get the average of the two values - I also used the ROUND() function to round to 1 decimal place, making our new value uniform with the rest of the life expectancy values in the table. Finally, I updated the table and set the **Life Expectancy** column in the first table equal to the new value we just calculated - of course, I only applied the calculation to rows that had blanks. This filled in all the blanks in the **Life Expectancy** column.
 
 ``` SQL
@@ -263,7 +263,7 @@ SET wle1.`Life expectancy` = ROUND((wle2.`Life expectancy` + wle3.`Life expectan
 WHERE wle1.`Life expectancy` = '';
 ```
 
-With that, I'm finished cleaning the dataset! All duplicates are removed and all blanks values are filled in. While the dataset looks clean at a glance, it's possible that during the exploratory data analysis portion of the project I'll discover some other harder-to-spot issues that need to be fixed. This is a normal part of the process and I'll deal with any other issues as needed! Let's get into some analysis and insights.
+With that, I'm finished cleaning the dataset! All duplicates are removed and all blank values are filled in. While the dataset looks clean at a glance, it's possible that during the exploratory data analysis portion of the project, I'll discover some other harder-to-spot issues that need to be fixed. This is a normal part of the process and I'll deal with any other issues as needed! Let's get into some analysis and insights.
 
 <br>
 <br>
@@ -273,7 +273,7 @@ With that, I'm finished cleaning the dataset! All duplicates are removed and all
 # Part 2: Exploratory Data Analysis
 
 ### Step 1: Which Countries Have Improved the Most and Least in Life Expectancy?
-- Note: I added the HAVING clause that removes zero values because there were a handful of countries that had no life expectancy data at all, they had all 0's in that column. These weren't values that I could fix like I did in Part 1 of the project - I would have to do investigation into how the data was collected to understand why those values were missing and see if I could recover the missing data. Unfortunately I was unable to do that in the context of this project, so they got filtered out instead!
+- Note: I added the HAVING clause that removes zero values because there were a handful of countries that had no life expectancy data at all, they had all 0's in that column. These weren't values that I could fix as I did in Part 1 of the project - I would have to do an investigation into how the data was collected to understand why those values were missing and see if I could recover the missing data. Unfortunately, I was unable to do that in the context of this project, so they got filtered out instead!
 
 ``` SQL
 SELECT 
@@ -336,7 +336,7 @@ Output Table:
 
 Insights 
 - Haiti, Zimbabwe, Eritrea, Uganda, and Botswana are the top five biggest improvers in terms of life expectancy over the last fifteen years. Haiti's life expectancy has increased by nearly thirty years, while the other countries in the top five have all increased by roughly twenty years, give or take. On the other hand, the countries that have improved the least in life expectancy are Guyana, Seychelles, Kuwait, Philippines, and Venezuela. Each of those countries saw an improvement of less than two years over the last fifteen years. 
-- Something important to note is that the minimum life expectancy between the top five and the bottom five have large variations. The top five started with life expectancies in the range of 36-46 years, while the bottom five started with life expectancies in the range of 65-73 years. If you look at the maximum life expectancy, the top five improvers are in the range of 65-67 while the bottom five are in the range of 66-74. The bottom five improvers still have a higher life expectancy overall even if they've improved less - the top five improvers started with such a low life expectancy that it was likely easier for them to see larger improvement.
+- Something important to note is that the minimum life expectancy between the top five and the bottom five has large variations. The top five started with life expectancies in the range of 36-46 years, while the bottom five started with life expectancies in the range of 65-73 years. If you look at the maximum life expectancy, the top five improvers are in the range of 65-67 while the bottom five are in the range of 66-74. The bottom five improvers still have a higher life expectancy overall even if they've improved less - the top five improvers started with such a low life expectancy that it was likely easier for them to see larger improvement.
 
 <br>
 
@@ -384,7 +384,7 @@ Insights
 <br>
 
 ### Step 3: Is There a Correlation Between GDP and Life Expectancy?
-- Note: There were some countries that had no data for life expectancy or GDP. The countries without those values were rather small ones, so it's possible those values never got reported. This is another case where understanding the data collection process would help understand why those values are missing and how to retrieve them. For the sake of not throwing off the numbers in this project, I filtered them out!
+- Note: Some countries had no data for life expectancy or GDP. The countries without those values were rather small ones in terms of size, so maybe they didn't report their stats. This is another case where understanding the data collection process would help understand why those values are missing and how to retrieve them. For the sake of not throwing off the numbers in this project, I filtered them out!
 
 ``` SQL
 SELECT 
@@ -445,9 +445,9 @@ Output Table:
 
 Insights
 
-- Even though we're only looking at a small amount of data, there seems to be a positive correlation between the GDP (Gross Domestic Product) and life expectancy of countries! As GDP goes up, so does life expectancy. This would make sense - richer countries have access to more advanced technologies and products, which would help them live a longer life. However, I want to dig a bit deeper to confirm this correlation truly exists!
+- Even though we're only looking at a small amount of data, there seems to be a positive correlation between the GDP (Gross Domestic Product) and the life expectancy of countries! As GDP goes up, so does life expectancy. This would make sense - richer countries have access to more advanced technologies and products, which would help them live a longer life. However, I want to dig a bit deeper to confirm this correlation truly exists!
 
-- My idea is to use CASE statements to group countries into a low GDP group and a high GDP group. Then, I can average the life expectancy for each group and see if I spot a difference. However, to accomplish this I need to figure out what's considered a low GDP and what's considered a high GDP. To determine this, I decided to order my dataset by GDP, split it down the middle, and base my calculations on the middle value - basically a loose way of calculating the median of the dataset. Any countries with a GDP greater than or equal to the median value will be considered high GDP countries, while any countries with a GDP less than the median value will be considered low GDP countries.
+- My idea is to use CASE statements to group countries into a low GDP group and a high GDP group. Then, I can average the life expectancy for each group and see if I spot a difference. However, to accomplish this I need to figure out what's considered a low GDP and what's considered a high GDP. To determine this, I decided to order my dataset by GDP, split it down the middle, and base my calculations on the middle value - a loose way of calculating the median of the dataset. Any countries with a GDP greater than or equal to the median value will be considered high-GDP countries, while any countries with a GDP less than the median value will be considered low-GDP countries.
 
 - The base dataset has about 2950 rows, but when filtering out the 0's in the GDP column, it loses about 450 rows. Filtering out the 0's in the **Life Expectancy** column loses another 10 rows. That means our filtered dataset has about 2,490 rows, so the middle of the dataset is around 1245.
 
@@ -522,8 +522,8 @@ Output Table:
 | Developing | 151                 | 67.1                |
 
 Insights
-- According to this output table, developed countries have an average life expectancy that's over 12 years higher compared to developing countries. However, it is worth it to note the discrepancy between the number of countries in both groups - there are over 100 more developing countries compared to developed countries. It's possible that there are developing countries in the mix that have an average life expectancy much higher than 67.1, but their average could be getting dragged down by other countries. It's much easier for developed countries to maintain a higher average when there's fewer of them.
-- Unfortunately, this isn't like the GDP where I can split the values down the middle to make the group numbers fair - there are more developing countries than developed countries, that's a fact I can't change. With the data that's available to us, it can be determined that having a status of developed correlates with a higher life expectancy, while countries with a status of developing have a lower life expectancy.
+- According to this output table, developed countries have an average life expectancy that's over 12 years higher compared to developing countries. However, it is worth it to note the discrepancy between the number of countries in both groups - there are over 100 more developing countries compared to developed countries. There may be developing countries in the mix that have an average life expectancy much higher than 67.1, but their average could be getting dragged down by other countries. It's much easier for developed countries to maintain a higher average when there are fewer of them.
+- Unfortunately, this isn't like the GDP where I can split the values down the middle to make the group numbers fair - there are more developing countries than developed countries, and that's a fact I can't change. With the data that's available to us, it can be determined that having a status of developed correlates with a higher life expectancy, while countries with a status of developing have a lower life expectancy.
 
 <br>
 
@@ -597,16 +597,16 @@ Output Table:
 | Eritrea                          | 60.7                | 15.2    |
 
 Insights
-- This was actually a bit suprising for me! Since obesity comes with so many health issues, I was fully expecting that countries with higher BMIs would have a lower life expectancy. The data shows the exact opposite though! Countries with high BMIs tend to have a higher life expectancy than countries with lower BMIs.
-- In hindsight, I do think this makes sense for a couple reasons:
+- This was a bit surprising for me! Since obesity comes with so many health issues, I was fully expecting that countries with higher BMIs would have a lower life expectancy. The data shows the exact opposite though! Countries with high BMIs tend to have a higher life expectancy than countries with lower BMIs.
+- In hindsight, I do think this makes sense for a couple of reasons:
   - There are likely countries where their low BMIs are not by choice - perhaps they don't have enough money to eat as much as they want or need to, leading to lower BMIs and lower life expectancies.
-  - Countries with high BMIs are full of people that can afford as much food as they want, which means they're also more likely to afford any treatments they need as a side effect of being obese. The people in these countries can alsoafford enough food to eat it all and become obese, and we've already established that high GDP correlates to a higher average life expectancy.
+  - Countries with high BMIs are full of people who can afford as much food as they want, which means they're also more likely to afford any treatments they need as a side effect of being obese. The people in these countries can also afford enough food to eat it all and become obese, and we've already established that high GDP correlates to a higher average life expectancy.
 - This was the most interesting insight so far, at least for me! Let's perform one more analysis before closing the project out!
 
 <br>
 
 ### Step 6: Is There a Correlation Between Adult Mortality and Life Expectancy?
-Adult mortality is a phrase I haden't heard of before, so I had to go do some research on it. Essentially, adult mortality is how many people 15 and up you would expect to die before they reach their 60th birthday, out of 1,000. So if a country has a mortality rate of 100, it means they would expect 100 people 15 and up to die before they reach 60, per 1,000 people. To find if there was a correlation between adult mortality and life expectancy, I wanted to find the country with the lowest overall adult mortality and the highest overall adult mortality.
+Adult mortality is a phrase I hadn't heard of before, so I had to go do some research on it. Essentially, adult mortality is how many people 15 and up you would expect to die before they reach their 60th birthday, out of 1,000. So if a country has a mortality rate of 100, it means they would expect 100 people 15 and up to die before they reach 60, per 1,000 people. To find if there was a correlation between adult mortality and life expectancy, I wanted to find the country with the lowest overall adult mortality and the highest overall adult mortality.
 
 ``` SQL
 SELECT
@@ -726,17 +726,17 @@ Output Table:
 
 Insights
 
-- The first thing I notice is that both countries have one or two values that may be slightly off. Tunisia has a value of 112 in 2007 and 1 in 2022, while Lesotho has a value of 52 for 2018. These could possibly be data quality issues or there could possibly be explanations for them - again, further information on the data collection process would be needed to resolve these errors, or identify if they're errors at all.
+- The first thing I notice is that both countries have one or two values that may be slightly off. Tunisia has a value of 112 in 2007 and 1 in 2022, while Lesotho has a value of 52 in 2018. These could be data quality issues or there could be explanations for them - again, further information on the data collection process would be needed to resolve these errors, or identify if they're errors at all.
 - Taking the data at face value, the difference in life expectancy and adult mortality between the two countries is staggering! Lesotho has a life expectancy in the range of 49-54 years, while Tunisia has a life expectancy in the range of 73-75 years. Tunisia's adult mortality rate is in the range of about 10-20, while Lesotho is in the range of 500-700.
-- The rolling total column is also super interesting here because we can calculate what percentage of adults each country expects to die before they reach 60. This dataset is over 15 years and each mortality rate is out of 1,000 people, so the total mortality rate is out of 15,000 people. This means that Tunisia would expect 300/15,000 of their adults to die before age 60, or about 2%. On the other hand, Lesotho expects 8,801/15,000 of their adults to die before age 60, or about 59%. Considering the fact that Tunisia's life expectancy is in the 70's while Lesotho's is in the 50's, this makes sense.
-- From the data presented, we could conclude that life expectancy and adult mortality have a negative correlation. The higher the life expectancy, the lower adult mortality, and vice versa. Considering adult mortality is based off how likely adults are to make it until age 60, it makes sense that countries with life expectancies far exceeding 60 would have a lower adult mortality rate.
+- The rolling total column is also super interesting here because we can calculate what percentage of adults each country expects to die before they reach 60. This dataset is over 15 years and each mortality rate is out of 1,000 people, so the total mortality rate is out of 15,000 people. This means that Tunisia would expect 300/15,000 of their adults to die before age 60, or about 2%. On the other hand, Lesotho expects 8,801/15,000 of its adults to die before age 60, or about 59%. Because Tunisia's life expectancy is in the 70's while Lesotho's is in the 50's, this makes sense.
+- From the data presented, we could conclude that life expectancy and adult mortality have a negative correlation. The higher the life expectancy, the lower the adult mortality, and vice versa. Considering adult mortality is based on how likely adults are to make it until age 60, it makes sense that countries with life expectancies far exceeding 60 would have a lower adult mortality rate.
 
 <br>
 <br>
 
 # Conclusion
 
-That concludes my World Life Expectancy project! I had a lot of fun with this project. It was great to start with dirty data, since it allowed me to show off my data cleaning skills. It was also great to just jump into the dataset, look over what columns were included, and come up with ideas for the type of insights I could extract. While I may not have answered a specific business problem here or provided a recommendation, I was still able to explore and become familiar with the data in the dataset - this is a very important skill for a data analyst, and a needed step before recommendations can be given. 
+That concludes my World Life Expectancy project! I had a lot of fun with this project. It was great to start with dirty data since it allowed me to show off my data cleaning skills. It was also great to just jump into the dataset, look over what columns were included, and come up with ideas for the type of insights I could extract. While I may not have answered a specific business problem here or provided a recommendation, I was still able to explore and become familiar with the data in the dataset - this is a very important skill for a data analyst, and a needed step before recommendations can be given. 
 
 This is a pretty hefty project, so if you've read this far, thank you so much for making it to the end! If you'd like to view my other projects, take a look at my resume, email me, or shoot me a message on LinkedIn, check out my resume website! All my project and contact information is on there. Thanks again!
 
