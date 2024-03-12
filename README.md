@@ -606,7 +606,7 @@ Insights
 <br>
 
 ### Step 6: Is There a Correlation Between Adult Mortality and Life Expectancy?
-Adult mortality is a phrase I haden't heard of before, so I had to go do some research on it. Essentially, adult mortality is how many people 15 and up you would expect to die before they reach their 60th birthday, out of 1000. So if a country has a mortality rate of 100, it means they would expect 100 people 15 and up to die before they reach 60, per 1000 people. To find if there was a correlation between adult mortality and life expectancy, I wanted to find the country with the lowest overall adult mortality and the highest overall adult mortality.
+Adult mortality is a phrase I haden't heard of before, so I had to go do some research on it. Essentially, adult mortality is how many people 15 and up you would expect to die before they reach their 60th birthday, out of 1,000. So if a country has a mortality rate of 100, it means they would expect 100 people 15 and up to die before they reach 60, per 1,000 people. To find if there was a correlation between adult mortality and life expectancy, I wanted to find the country with the lowest overall adult mortality and the highest overall adult mortality.
 
 ``` SQL
 SELECT
@@ -729,7 +729,7 @@ Insights
 - The first thing I notice is that both countries have one or two values that may be slightly off. Tunisia has a value of 112 in 2007 and 1 in 2022, while Lesotho has a value of 52 for 2018. These could possibly be data quality issues or there could possibly be explanations for them - again, further information on the data collection process would be needed to resolve these errors, or identify if they're errors at all.
 - Taking the data at face value, the difference in life expectancy and adult mortality between the two countries is staggering! Lesotho has a life expectancy in the range of 49-54 years, while Tunisia has a life expectancy in the range of 73-75 years. Tunisia's adult mortality rate is in the range of about 10-20, while Lesotho is in the range of 500-700.
 - The rolling total column is also super interesting here because we can calculate what percentage of adults each country expects to die before they reach 60. This dataset is over 15 years and each mortality rate is out of 1,000 people, so the total mortality rate is out of 15,000 people. This means that Tunisia would expect 300/15,000 of their adults to die before age 60, or about 2%. On the other hand, Lesotho expects 8,801/15,000 of their adults to die before age 60, or about 59%. Considering the fact that Tunisia's life expectancy is in the 70's while Lesotho's is in the 50's, this makes sense.
-- From the data presented, we could conclude that life expectancy and adult mortality have a negative correlation. The higher the life expectancy, the lower adult mortality, and vice versa. Considering adult mortality is based off how likely adults are to make it until age 60, it makes sense that countries with life expectancies far exceeding 60 would have a lower mortality rate.
+- From the data presented, we could conclude that life expectancy and adult mortality have a negative correlation. The higher the life expectancy, the lower adult mortality, and vice versa. Considering adult mortality is based off how likely adults are to make it until age 60, it makes sense that countries with life expectancies far exceeding 60 would have a lower adult mortality rate.
 
 <br>
 <br>
