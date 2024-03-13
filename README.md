@@ -17,6 +17,8 @@
     - [Step 4: Is There a Correlation Between Status and Life Expectancy?](#step-4-is-there-a-correlation-between-status-and-life-expectancy)
     - [Step 5: Is There a Correlation Between BMI and Life Expectancy?](#step-5-is-there-a-correlation-between-bmi-and-life-expectancy)
     - [Step 6: Is There a Correlation Between Adult Mortality and Life Expectancy?](#step-6-is-there-a-correlation-between-adult-mortality-and-life-expectancy)
+- [Part 3: Data Visualization](#part-3-data-visualization)
+    - [     
 - [Conclusion](#conclusion)
 
 
@@ -738,6 +740,38 @@ Insights
 - Taking the data at face value, the difference in life expectancy and adult mortality between the two countries is staggering! Lesotho has a life expectancy in the range of 49-54 years, while Tunisia has a life expectancy in the range of 73-75 years. Tunisia's adult mortality rate is in the range of about 10-20, while Lesotho is in the range of 500-700.
 - The rolling total column is also super interesting here because we can calculate what percentage of adults each country expects to die before they reach 60. This dataset is over 15 years and each mortality rate is out of 1,000 people, so the total mortality rate is out of 15,000 people. This means that Tunisia would expect 300/15,000 of their adults to die before age 60, or about 2%. On the other hand, Lesotho expects 8,801/15,000 of its adults to die before age 60, or about 59%. Because Tunisia's life expectancy is in the 70's while Lesotho's is in the 50's, this makes sense.
 - From the data presented, we could conclude that life expectancy and adult mortality have a negative correlation. The higher the life expectancy, the lower the adult mortality, and vice versa. Considering adult mortality is based on how likely adults are to make it until age 60, it makes sense that countries with life expectancies far exceeding 60 would have a lower adult mortality rate.
+
+<br>
+<br>
+
+# Part 3: Data Visualization
+
+I used Tableau Desktop to create visualizations for some of the queries written in the project. The global health indicators I made visualizations for are life expectancy increase, average GDP, and average BMI. I used these visualizations to create an interactive dashboard where the user can enter values to look at the top and bottom countries of the global health indicators! For example, the user can look at the top 5 and bottom 10 countries in BMI, the top 5 and bottom 3 countries in GDP, whatever they'd like! I used parameters and sets to accomplish this.
+
+Click here to view the workbook on Tableau Public!
+Note: Tableau Public was giving me some trouble and wouldn't let me keep the color palette I had in Tableau Desktop - it kept getting stuck on the same color even when I tried to fix it and republish it. The actual color palette I used can be seen in the screenshots below!
+
+### The Top 5 and Bottom 5 Countries in Life Expectancy Increase
+
+![Visualization of The Top 5 and Bottom 5 Countries in Life Expectancy Increase](figs/cjd_weather_all_states.png)
+
+<br>
+
+### The Top 5 and Bottom 5 Countries in GDP and Their Life Expectancies
+
+
+
+<br>
+
+### The Top 5 and Bottom 5 Countries in BMI and Their Life Expectancies
+
+
+
+<br>
+
+### Interactive Dashboard of Global Indicators
+
+
 
 <br>
 <br>
