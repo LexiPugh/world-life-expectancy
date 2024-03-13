@@ -1,4 +1,4 @@
-# World Life Expectancy: Data Cleaning, Analysis, and Visualization
+# World Life Expectancy: Data Cleaning and EDA
 
 **Table of Contents**
 
