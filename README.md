@@ -472,6 +472,7 @@ FROM
     world_life_expectancy
 WHERE
     GDP <> 0
+    AND `Life expectancy` <> 0
 ORDER BY
     GDP
 LIMIT
@@ -484,16 +485,16 @@ Output Table:
 
 | GDP  |
 | :--- |
-| 1765 |
+| 1772 |
 
-I then used that median GDP value of 1765 as a basis for the CASE statements in my next query.
+I then used that median GDP value of 1772 as a basis for the CASE statements in my next query.
 
 ``` SQL
 SELECT 
-    SUM(CASE WHEN GDP >= 1765 THEN 1 ELSE 0 END) AS high_GDP,
-    ROUND(AVG(CASE WHEN GDP >= 1765 THEN `Life expectancy` ELSE NULL END), 1) AS high_GDP_life_expectancy,
-    SUM(CASE WHEN GDP < 1765 THEN 1 ELSE 0 END) AS low_GDP,
-    ROUND(AVG(CASE WHEN GDP < 1765 THEN `Life expectancy` ELSE NULL END), 1) AS low_GDP_life_expectancy
+    SUM(CASE WHEN GDP >= 1772 THEN 1 ELSE 0 END) AS high_GDP,
+    ROUND(AVG(CASE WHEN GDP >= 1772 THEN `Life expectancy` ELSE NULL END), 1) AS high_GDP_life_expectancy,
+    SUM(CASE WHEN GDP < 1772 THEN 1 ELSE 0 END) AS low_GDP,
+    ROUND(AVG(CASE WHEN GDP < 1772 THEN `Life expectancy` ELSE NULL END), 1) AS low_GDP_life_expectancy
 FROM 
     world_life_expectancy
 WHERE 
@@ -505,11 +506,11 @@ Output Table:
 
 | high_GDP | high_GDP_life_expectancy | low_GDP | low_GDP_life_expectancy |
 | -------- | ------------------------ | ------- | ----------------------- |
-| 1243     | 74.7                     | 1242    | 64.1                    |
+| 1241     | 74.7                     | 1244    | 64.1                    |
 
 Insights:
 
-First of all, it seems like the median GDP being 1765 was quite a close guess - the high GDP group has 1243 countries while the low GDP group has 1242 countries, so they're split right down the middle. This query also helps us see the relationship between GDP and life expectancy more clearly. The high GDP group has a life expectancy greater than the low GDP group by over 10 years. With the results of this query, I'm more confident in saying that there's a positive correlation between GDP and life expectancy - the higher the GDP, the higher the life expectancy!
+First of all, it seems like the median GDP being 1772 was quite a close guess - the high GDP group has 1241 countries while the low GDP group has 1244 countries, so they're split right down the middle. This query also helps us see the relationship between GDP and life expectancy more clearly. The high GDP group has a life expectancy greater than the low GDP group by over 10 years. With the results of this query, I'm more confident in saying that there's a positive correlation between GDP and life expectancy - the higher the GDP, the higher the life expectancy!
 
 <br>
 
