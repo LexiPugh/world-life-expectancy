@@ -19,8 +19,8 @@
     - [Step 6: Is There a Correlation Between Adult Mortality and Life Expectancy?](#step-6-is-there-a-correlation-between-adult-mortality-and-life-expectancy)
 - [Part 3: Data Visualization](#part-3-data-visualization)
     - [The Top 5 and Bottom 5 Countries in Life Expectancy Increase](#the-top-5-and-bottom-5-countries-in-life-expectancy-increase)
-    - [The Top 5 and Bottom 5 Countries in GDP and Their Life Expectancies](#the-top-5-and-bottom-5-countries-in-gdp-and-their-life-expectancies)
-    - [The Top 5 and Bottom 5 Countries in BMI and Their Life Expectancies](#the-top-5-and-bottom-5-countries-in-bmi-and-their-life-expectancies)
+    - [The Top 5 and Bottom 5 Countries in Average GDP](#the-top-5-and-bottom-5-countries-in-average-gdp)
+    - [The Top 5 and Bottom 5 Countries in Average BMI](#the-top-5-and-bottom-5-countries-in-average-bmi)
     - [Interactive Dashboard of Global Indicators](#interactive-dashboard-of-global-indicators)
 - [Conclusion](#conclusion)
 
@@ -752,9 +752,7 @@ Insights
 
 I used Tableau Desktop to create visualizations for some of the queries written in the project. The global health indicators I made visualizations for are life expectancy increase, average GDP, and average BMI. I used these visualizations to create an interactive dashboard where the user can enter values to look at the top and bottom countries of the global health indicators! For example, the user can look at the top 5 and bottom 10 countries in BMI, the top 5 and bottom 3 countries in GDP, whatever they'd like! I used parameters and sets to accomplish this.
 
-Click here to view the workbook on Tableau Public!
-
-Note: Tableau Public was giving me some trouble and wouldn't let me keep the color palette I had in Tableau Desktop - it kept getting stuck on the same color even when I tried to fix it and republish it. The actual color palette I used can be seen in the screenshots below!
+[Click Here to View the Workbook on Tableau Public!](https://public.tableau.com/views/LexiPughWorldLifeExpectancyProject/Top5vs_Bottom5?:language=en-US&:sid=&:display_count=n&:origin=viz_share_link)
 
 ### The Top 5 and Bottom 5 Countries in Life Expectancy Increase
 
@@ -762,15 +760,15 @@ Note: Tableau Public was giving me some trouble and wouldn't let me keep the col
 
 <br>
 
-### The Top 5 and Bottom 5 Countries in GDP and Their Life Expectancies
+### The Top 5 and Bottom 5 Countries in Average GDP
 
-![Visualization of The Top 5 and Bottom 5 Countries in GDP and Their Life Expectancies](figs/gdp_life_expectancy.png)
+![Visualization of The Top 5 and Bottom 5 Countries in GDP and Their Life Expectancies](figs/average_gdp.png)
 
 <br>
 
-### The Top 5 and Bottom 5 Countries in BMI and Their Life Expectancies
+### The Top 5 and Bottom 5 Countries in Average BMI
 
-![Visualization of The Top 5 and Bottom 5 Countries in BMI and Their Life Expectancies](figs/bmi_life_expectancy.png)
+![Visualization of The Top 5 and Bottom 5 Countries in BMI and Their Life Expectancies](figs/average_bmi.png)
 
 <br>
 
