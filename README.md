@@ -756,7 +756,7 @@ I used Tableau Desktop to create visualizations for some of the queries written 
 
 ### Link to the Tableau Public Workbook
 
-Here's my Tableau Public workbook if you'd like to take a closer look at my visualizations and interact with the dashboard! I also attached screenshots below of some key visualizations if you'd just like a brief preview of what I did.
+Though I did complete the visualizations in Tableau Desktop, I uploaded my workbook to Tableau Public for easy sharing! Here's my Tableau Public workbook if you'd like to take a closer look at my visualizations and interact with the dashboard. I also attached screenshots below of some key visualizations if you'd just like a brief preview of what I did.
 
 [Click Here to View the Workbook on Tableau Public!](https://public.tableau.com/views/LexiPughWorldLifeExpectancyProject/Top5vs_Bottom5?:language=en-US&:sid=&:display_count=n&:origin=viz_share_link)
 
