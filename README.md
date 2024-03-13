@@ -407,11 +407,11 @@ SELECT
     ROUND(AVG(GDP), 1) AS avg_gdp
 FROM 
     world_life_expectancy
+WHERE
+    `Life expectancy` <> 0
+    AND gdp <> 0
 GROUP BY
     country
-HAVING
-    avg_life_expectancy <> 0
-    AND avg_gdp <> 0
 ORDER BY
     avg_gdp DESC
 LIMIT
@@ -436,11 +436,11 @@ SELECT
     ROUND(AVG(GDP), 1) AS avg_gdp
 FROM 
     world_life_expectancy
+WHERE
+    `Life expectancy` <> 0
+    AND gdp <> 0
 GROUP BY
     country
-HAVING
-    avg_life_expectancy <> 0
-    AND avg_gdp <> 0
 ORDER BY
     avg_gdp ASC
 LIMIT
@@ -451,11 +451,11 @@ Output Table:
 
 | country | avg_life_expectancy | avg_gdp |
 | :------ | :------------------ | :------ |
-| Somalia | 53.3                | 55.8    |
 | Burundi | 55.5                | 137.9   |
-| Eritrea | 60.7                | 194.6   |
 | Malawi  | 49.9                | 237.6   |
 | Liberia | 57.5                | 246.3   |
+| Eritrea | 59.5                | 259.4   |
+| Niger   | 57                  | 259.9   |
 
 Insights
 
