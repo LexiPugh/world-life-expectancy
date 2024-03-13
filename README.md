@@ -1,4 +1,4 @@
-# World Life Expectancy: Data Cleaning and EDA
+# World Life Expectancy: Data Cleaning, Analysis, and Visualization
 
 **Table of Contents**
 
@@ -18,20 +18,24 @@
     - [Step 5: Is There a Correlation Between BMI and Life Expectancy?](#step-5-is-there-a-correlation-between-bmi-and-life-expectancy)
     - [Step 6: Is There a Correlation Between Adult Mortality and Life Expectancy?](#step-6-is-there-a-correlation-between-adult-mortality-and-life-expectancy)
 - [Part 3: Data Visualization](#part-3-data-visualization)
-    - [     
+    - [The Top 5 and Bottom 5 Countries in Life Expectancy Increase](#the-top-5-and-bottom-5-countries-in-life-expectancy-increase)
+    - [The Top 5 and Bottom 5 Countries in GDP and Their Life Expectancies](#the-top-5-and-bottom-5-countries-in-gdp-and-their-life-expectancies)
+    - [The Top 5 and Bottom 5 Countries in BMI and Their Life Expectancies](#the-top-5-and-bottom-5-countries-in-bmi-and-their-life-expectancies)
+    - [Interactive Dashboard of Global Indicators](#interactive-dashboard-of-global-indicators)
 - [Conclusion](#conclusion)
 
+<br>
 
 # Project Overview
 
-This project was completed in MySQL Workbench. In this project, I was looking at a dataset that contained information about life expectancy around the world, along with many other global health indicators. The first goal of this project was to identify issues in the dataset and clean the data as much as possible. The second goal of this project was to explore variations in life expectancy across different countries and examine if other indicators correlate, whether positively or negatively, with life expectancy. The overall goal of this project wasn't to provide a recommendation like many of my other projects are - the goal was simply to become familiar with the dataset, which is an important skill for any data analyst. The tasks completed in this project include:
+This project was completed in MySQL Workbench and Tableau Desktop. In this project, I was looking at a dataset that contained information about life expectancy around the world, along with many other global health indicators. The first goal of this project was to identify issues in the dataset and clean the data as much as possible. The second goal of this project was to explore variations in life expectancy across different countries and examine if other indicators correlate, whether positively or negatively, with life expectancy. The third goal of this project was a make an interactive dashboard with the data in the project. The overall goal of this project wasn't to provide a recommendation like many of my other projects are - the goal was simply to become familiar with the dataset, which is an important skill for any data analyst. The tasks completed in this project include:
 
 - Used the CONCAT() function to engineer a unique column that could be used to check for the existence of duplicates
 - Wrote complex SQL queries that used window functions and self-joins to remove duplicates and fill in blanks where possible
 - Conducted exploratory data analysis (EDA) to identify patterns and trends in life expectancy over time and across different geographic regions
 - Examined the relationship between life expectancy and various socio-economic indicators such as GDP, BMI, and Adult Mortality
 - Researched global indicators such as Adult Mortality to contextualize my findings and enhance understanding of the factors influencing life expectancy
-- Used statistical methods such as finding the median of the dataset to dig deeper into the data and verify my findings about the correlation between GDP and life expectancy
+- Used Tableau parameters and sets to create an interactive dashboard where the user can see the best and worst-performing countries in certain metrics
 
 
 <br>
@@ -749,29 +753,30 @@ Insights
 I used Tableau Desktop to create visualizations for some of the queries written in the project. The global health indicators I made visualizations for are life expectancy increase, average GDP, and average BMI. I used these visualizations to create an interactive dashboard where the user can enter values to look at the top and bottom countries of the global health indicators! For example, the user can look at the top 5 and bottom 10 countries in BMI, the top 5 and bottom 3 countries in GDP, whatever they'd like! I used parameters and sets to accomplish this.
 
 Click here to view the workbook on Tableau Public!
+
 Note: Tableau Public was giving me some trouble and wouldn't let me keep the color palette I had in Tableau Desktop - it kept getting stuck on the same color even when I tried to fix it and republish it. The actual color palette I used can be seen in the screenshots below!
 
 ### The Top 5 and Bottom 5 Countries in Life Expectancy Increase
 
-![Visualization of The Top 5 and Bottom 5 Countries in Life Expectancy Increase](figs/cjd_weather_all_states.png)
+![Visualization of The Top 5 and Bottom 5 Countries in Life Expectancy Increase](figs/life_expectancy_increase.png)
 
 <br>
 
 ### The Top 5 and Bottom 5 Countries in GDP and Their Life Expectancies
 
-
+![Visualization of The Top 5 and Bottom 5 Countries in GDP and Their Life Expectancies](figs/gdp_life_expectancy.png)
 
 <br>
 
 ### The Top 5 and Bottom 5 Countries in BMI and Their Life Expectancies
 
-
+![Visualization of The Top 5 and Bottom 5 Countries in BMI and Their Life Expectancies](figs/bmi_life_expectancy.png)
 
 <br>
 
 ### Interactive Dashboard of Global Indicators
 
-
+![The Interactive Dashboard of Global Indicators](figs/interactive_dashboard.png)
 
 <br>
 <br>
